@@ -54,6 +54,7 @@ class Pipeline(_Pipeline):
         hparams_file: Union[Text, Path] = None,
         use_auth_token: Union[Text, None] = None,
         cache_dir: Union[Path, Text] = CACHE_DIR,
+        device: Union[Text, None] = None,
     ) -> "Pipeline":
         """Load pretrained pipeline
 
@@ -179,6 +180,12 @@ visit https://hf.co/{model_id} to accept the user conditions."""
         # send pipeline to specified device
         if "device" in config:
             device = torch.device(config["device"])
+            try:
+                pipeline.to(device)
+            except RuntimeError as e:
+                print(e)
+        if device:
+            device = torch.device(device)
             try:
                 pipeline.to(device)
             except RuntimeError as e:
